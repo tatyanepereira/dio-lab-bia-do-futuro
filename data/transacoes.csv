@@ -9,3 +9,18 @@ data,descricao,categoria,valor,tipo
 2025-10-15,Conta de Luz,moradia,180.00,saida
 2025-10-20,Academia,saude,99.00,saida
 2025-10-25,Combustível,transporte,250.00,saida
+2025-10-26,Ifood Burgers,alimentacao,89.90,saida
+2025-10-26,Uber,transporte,35.00,saida
+2025-10-27,Conta de Água,moradia,95.00,saida
+2025-10-28,Internet Fibra,moradia,120.00,saida
+2025-10-28,Ifood Pizza,alimentacao,110.00,saida
+2025-10-29,Supermercado Extra,alimentacao,320.00,saida
+2025-10-29,Cinema Shopping,lazer,65.00,saida
+2025-10-30,Ifood Japonês,alimentacao,145.00,saida
+2025-10-30,Venda OLX,receita,250.00,entrada
+2025-10-31,Assinatura Spotify,lazer,34.90,saida
+2025-11-01,Salário,receita,5000.00,entrada
+2025-11-02,Aluguel,moradia,1200.00,saida
+2025-11-03,Padaria Panificadora,alimentacao,42.00,saida
+2025-11-04,Uber,transporte,28.50,saida
+2025-11-05,Ifood Doces,alimentacao,55.00,saida
