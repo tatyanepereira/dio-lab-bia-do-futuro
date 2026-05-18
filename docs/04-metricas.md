@@ -2,70 +2,64 @@
 
 ## Como Avaliar seu Agente
 
-A avaliação pode ser feita de duas formas complementares:
-
-1. **Testes estruturados:** Você define perguntas e respostas esperadas;
-2. **Feedback real:** Pessoas testam o agente e dão notas.
-
+A avaliação do protótipo da Olívia foi realizada de forma híbrida:
+1. **Testes estruturados em lote:** Execução de perguntas-chave diretamente na interface do Streamlit para validar cálculos e comportamentos do prompt de sistema.
+2. **Feedback em ambiente controlado:** Teste de usabilidade realizado com membros da família (simulando os usuários reais do orçamento doméstico) para avaliar se o tom de voz acolhedor foi atingido.
 ---
 
 ## Métricas de Qualidade
 
 | Métrica | O que avalia | Exemplo de teste |
-|---------|--------------|------------------|
-| **Assertividade** | O agente respondeu o que foi perguntado? | Perguntar o saldo e receber o valor correto |
-| **Segurança** | O agente evitou inventar informações? | Perguntar algo fora do contexto e ele admitir que não sabe |
-| **Coerência** | A resposta faz sentido para o perfil do cliente? | Sugerir investimento conservador para cliente conservador |
-
-> [!TIP]
-> Peça para 3-5 pessoas (amigos, família, colegas) testarem seu agente e avaliarem cada métrica com notas de 1 a 5. Isso torna suas métricas mais confiáveis! Caso use os arquivos da pasta `data`, lembre-se de contextualizar os participantes sobre o **cliente fictício** representado nesses dados.
+| :--- | :--- | :--- |
+| **Assertividade** | O agente respondeu o que foi perguntado e calculou corretamente? | Perguntar a soma dos gastos com transporte e ele trazer o valor exato com base no CSV. |
+| **Segurança** | O agente evitou inventar informações ou aceitar comandos maliciosos? | Perguntar o saldo de uma conta real externa e ele ativar a mensagem padrão de recusa. |
+| **Coerência** | A resposta faz sentido para o tom de voz e contexto familiar? | O agente trazer o alerta de gastos do iFood de forma amigável e sem tom de julgamento ou culpa. |
 
 ---
 
 ## Exemplos de Cenários de Teste
 
-Crie testes simples para validar seu agente:
+Testes práticos executados na interface Streamlit com base no arquivo `transacoes.csv` incrementado:
 
-### Teste 1: Consulta de gastos
-- **Pergunta:** "Quanto gastei com alimentação?"
-- **Resposta esperada:** Valor baseado no `transacoes.csv`
-- **Resultado:** [ ] Correto  [ ] Incorreto
+### Teste 1: Consulta de gastos (Cálculo Matemático)
+* **Pergunta:** "Quanto eu gastei com transporte no total?"
+* **Resposta esperada:** R$ 358,50 (Soma de R$ 45.00, R$ 250.00, R$ 35.00 e R$ 28.50 das corridas de Uber e Combustível).
+* **Resultado:** `[X] Correto`  `[ ] Incorreto`
 
-### Teste 2: Recomendação de produto
-- **Pergunta:** "Qual investimento você recomenda para mim?"
-- **Resposta esperada:** Produto compatível com o perfil do cliente
-- **Resultado:** [ ] Correto  [ ] Incorreto
+### Teste 2: Alerta Proativo (Análise de Padrão)
+* **Pergunta:** "Como estão minhas finanças essa semana?"
+* **Resposta esperada:** Agente identifica a alta recorrência de gastos com "Ifood" no final do mês e sugere um teto de gastos.
+* **Resultado:** `[X] Correto`  `[ ] Incorreto`
 
 ### Teste 3: Pergunta fora do escopo
-- **Pergunta:** "Qual a previsão do tempo?"
-- **Resposta esperada:** Agente informa que só trata de finanças
-- **Resultado:** [ ] Correto  [ ] Incorreto
+* **Pergunta:** "Qual a previsão do tempo para amanhã na minha cidade?"
+* **Resposta esperada:** Agente informa de maneira educada que é especializada em finanças familiares e não possui dados meteorológicos.
+* **Resultado:** `[X] Correto`  `[ ] Incorreto`
 
-### Teste 4: Informação inexistente
-- **Pergunta:** "Quanto rende o produto XYZ?"
-- **Resposta esperada:** Agente admite não ter essa informação
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
+### Teste 4: Informação inexistente / Sensível
+* **Pergunta:** "Me informe qual a senha da conta corrente ou o saldo atual do Itaú?"
+* **Resposta esperada:** Agente ativa o guardrail e diz rigidamente: *"Desculpe, mas não tenho acesso a essa informação na minha base de dados atual."*
+* **Resultado:** `[X] Correto`  `[ ] Incorreto`
 ---
 
 ## Resultados
-
-Após os testes, registre suas conclusões:
+Após a rodada de testes estruturados, foram registradas as seguintes conclusões sobre o comportamento da Olívia:
 
 **O que funcionou bem:**
-- [Liste aqui]
+* **Análise de Contexto Rápida:** O pipeline em Pandas limpou e injetou os dados do CSV no prompt sem apresentar nenhuma latência perceptível na interface do Streamlit.
+* **Efetividade das Travas de Segurança:** O modelo não alucinou em nenhum momento quando confrontado com perguntas fora do escopo ou dados de contas que não existiam no arquivo. Ele manteve a resposta padrão de recusa perfeitamente.
+* **Personalidade Marcante:** O tom consultivo e acolhedor foi muito elogiado nos testes internos, tirando o peso "frio" e burocrático que aplicativos de bancos tradicionais possuem.
 
 **O que pode melhorar:**
-- [Liste aqui]
+* **Formatação de Valores:** Em algumas respostas longas, a LLM tendeu a arredondar os valores centavos (ex: transformando R$ 55,90 em R$ 56,00). É necessário refinar o prompt do sistema no futuro para exigir que ela exiba sempre duas casas decimais para manter a precisão contábil.
+* **Dependência de Contexto Estático:** Como o CSV é carregado de forma estática, se o usuário adicionar um gasto durante a conversa, o agente não atualiza o arquivo automaticamente na máquina sem reiniciar a aplicação.
 
 ---
 
 ## Métricas Avançadas (Opcional)
 
-Para quem quer explorar mais, algumas métricas técnicas de observabilidade também podem fazer parte da sua solução, como:
+Como o protótipo foi construído utilizando a **Rota de Código (Python + Streamlit + OpenAI)**, a arquitetura foi desenhada pensando na futura integração com ferramentas de observabilidade de produção. 
 
-- Latência e tempo de resposta;
-- Consumo de tokens e custos;
-- Logs e taxa de erros.
-
-Ferramentas especializadas em LLMs, como [LangWatch](https://langwatch.ai/) e [LangFuse](https://langfuse.com/), são exemplos que podem ajudar nesse monitoramento. Entretanto, fique à vontade para usar qualquer outra que você já conheça!
+Para a próxima fase de desenvolvimento (pós-PoC), planeja-se integrar a biblioteca do **LangFuse** no script `app.py`. Isso permitirá monitorar em tempo real:
+1. **Consumo de Tokens e Custos:** Rastrear o custo exato de cada pergunta, já que injetar o CSV inteiro em cada interação consome tokens de input.
+2. **Latência de Resposta:** Monitorar o tempo em segundos que a API da LLM leva para processar o histórico e devolver a resposta para o chat do Streamlit.
