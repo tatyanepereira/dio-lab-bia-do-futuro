@@ -5,7 +5,7 @@ from google.genai import types
 
 # 1. Configuração da API do Gemini
 # Substitua pelo seu token real gerado no Google AI Studio
-API_KEY = "AIzaSyBCbLsfusU7-wdUWXZezuKvtCuJ7c5HhEw"
+API_KEY = ""
 client = genai.Client(api_key=API_KEY)
 
 # 2. Função para carregar a base de dados (CSV)
